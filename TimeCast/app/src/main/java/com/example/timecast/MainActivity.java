@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setOnNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
 
-            if (id == R.id.navigation_creation) {
+            if (id == R.id.navigation_calendar) {
                 return true;
             } else if (id == R.id.navigation_weather) {
                 startActivity(new Intent(MainActivity.this, WeatherActivity.class));

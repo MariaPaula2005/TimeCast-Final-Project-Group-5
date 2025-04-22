@@ -27,4 +27,35 @@
         <item>Indoor</item>
         <item>Outdoor</item>
     </string-array>
+    
+    <!-- Weather descriptions -->
+    <string name="weather_clear_sky">Clear sky</string>
+    <string name="weather_mainly_clear">Mainly clear</string>
+    <string name="weather_partly_cloudy">Partly cloudy</string>
+    <string name="weather_overcast">Overcast</string>
+    <string name="weather_fog">Foggy</string>
+    <string name="weather_light_drizzle">Light drizzle</string>
+    <string name="weather_moderate_drizzle">Moderate drizzle</string>
+    <string name="weather_dense_drizzle">Dense drizzle</string>
+    <string name="weather_freezing_drizzle">Freezing drizzle</string>
+    <string name="weather_slight_rain">Light rain</string>
+    <string name="weather_moderate_rain">Moderate rain</string>
+    <string name="weather_heavy_rain">Heavy rain</string>
+    <string name="weather_freezing_rain">Freezing rain</string>
+    <string name="weather_slight_snow">Light snow</string>
+    <string name="weather_moderate_snow">Moderate snow</string>
+    <string name="weather_heavy_snow">Heavy snow</string>
+    <string name="weather_snow_grains">Snow grains</string>
+    <string name="weather_slight_showers">Light rain showers</string>
+    <string name="weather_moderate_showers">Moderate rain showers</string>
+    <string name="weather_violent_showers">Violent rain showers</string>
+    <string name="weather_snow_showers">Snow showers</string>
+    <string name="weather_thunderstorm">Thunderstorm</string>
+    <string name="weather_thunderstorm_hail">Thunderstorm with hail</string>
+    <string name="weather_unknown">Unknown weather</string>
+    
+    <!-- Weather notifications -->
+    <string name="weather_alert_title">Weather Alert for Your Events</string>
+    <string name="weather_alert_outdoor_activity">Weather may affect your outdoor activity: %1$s</string>
+    <string name="weather_forecast_for_event">Weather forecast for %1$s: %2$s, %3$.1f°C</string>
 </resources>
