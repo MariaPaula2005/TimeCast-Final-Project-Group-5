@@ -33,6 +33,8 @@
         <activity
                 android:name=".CreationActivity"
                 android:exported="false" />
+        <receiver android:name=".ReminderReceiver" />
+
     </application>
 
 </manifest>

@@ -12,6 +12,9 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 
 public class CreationActivity extends AppCompatActivity {
     private EditText inputTitle, inputDescription, inputDate, inputStartTime, inputEndTime, inputLocation;
@@ -27,6 +30,7 @@ public class CreationActivity extends AppCompatActivity {
     private Calendar endTimeCalendar = Calendar.getInstance();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+    private Spinner inputReminder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,7 @@ public class CreationActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         prefs = getSharedPreferences("TimeCastPrefs", MODE_PRIVATE);
         btnCancel = findViewById(R.id.cancel_button);
+        inputReminder = findViewById(R.id.inputReminder);
 
 
         // Set current date and time defaults
@@ -170,8 +175,41 @@ public class CreationActivity extends AppCompatActivity {
                 allEvents = gson.fromJson(json, listType);
             }
 
+            // Check for event conflict
+            if (isConflicting(date, startTime, endTime)) {
+                Toast.makeText(CreationActivity.this, "Time conflict with another event!", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             // Add new event
             allEvents.add(newEvent);
+
+            // Calculate reminder offset
+            int reminderOffsetMinutes = 0;
+            String selectedReminder = inputReminder.getSelectedItem().toString();
+            switch (selectedReminder) {
+                case "5 minutes before": reminderOffsetMinutes = 5; break;
+                case "10 minutes before": reminderOffsetMinutes = 10; break;
+                case "30 minutes before": reminderOffsetMinutes = 30; break;
+                case "1 hour before": reminderOffsetMinutes = 60; break;
+            }
+
+            // Schedule reminder
+            if (reminderOffsetMinutes > 0) {
+                Calendar reminderTime = (Calendar) startCal.clone();
+                reminderTime.add(Calendar.MINUTE, -reminderOffsetMinutes);
+
+                Intent reminderIntent = new Intent(this, ReminderReceiver.class);
+                reminderIntent.putExtra("title", title);
+                reminderIntent.putExtra("desc", desc);
+
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                        this, (int) System.currentTimeMillis(), reminderIntent, PendingIntent.FLAG_IMMUTABLE
+                );
+
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminderTime.getTimeInMillis(), pendingIntent);
+            }
 
             // Save all events
             prefs.edit().putString(PREF_KEY, gson.toJson(allEvents)).apply();
@@ -196,4 +234,26 @@ public class CreationActivity extends AppCompatActivity {
             eventList = new ArrayList<>();
         }
     }
+
+    private boolean isConflicting(Date newDate, Date newStart, Date newEnd) {
+        for (Event event : eventList) {
+            // Only check conflicts on the same date
+            if (isSameDay(event.date, newDate)) {
+                if (newStart.before(event.endTime) && newEnd.after(event.startTime)) {
+                    return true; // Conflict detected
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isSameDay(Date d1, Date d2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(d1);
+        cal2.setTime(d2);
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
+                && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+    }
+
 }

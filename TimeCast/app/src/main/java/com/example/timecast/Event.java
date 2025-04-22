@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
-
 public class Event implements Serializable {
     public String id;
     public String title;
@@ -72,4 +71,5 @@ public class Event implements Serializable {
     public String getId() {
         return id;
     }
+
 }

@@ -58,4 +58,14 @@
     <string name="weather_alert_title">Weather Alert for Your Events</string>
     <string name="weather_alert_outdoor_activity">Weather may affect your outdoor activity: %1$s</string>
     <string name="weather_forecast_for_event">Weather forecast for %1$s: %2$s, %3$.1f°C</string>
+
+    <!-- Reminder options-->
+    <string-array name="reminder_options">
+        <item>None</item>
+        <item>5 minutes before</item>
+        <item>10 minutes before</item>
+        <item>30 minutes before</item>
+        <item>1 hour before</item>
+    </string-array>
+
 </resources>
