@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Sun circle -->
+    <path
+        android:fillColor="#FFEB3B"
+        android:pathData="M12,7C9.24,7 7,9.24 7,12C7,14.76 9.24,17 12,17C14.76,17 17,14.76 17,12C17,9.24 14.76,7 12,7Z" />
+    
+    <!-- Sun rays -->
+    <path
+        android:fillColor="#FFEB3B"
+        android:pathData="M12,5L12,3M12,21L12,19M5,12L3,12M21,12L19,12M7.05,7.05L5.63,5.63M18.36,18.36L16.95,16.95M7.05,16.95L5.63,18.36M18.36,5.63L16.95,7.05" 
+        android:strokeWidth="2"
+        android:strokeColor="#FFEB3B"
+        android:strokeLineCap="round" />
+</vector> 
