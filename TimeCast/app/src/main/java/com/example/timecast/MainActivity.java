@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button addActivityButton;
     private LinearLayout timeLabels;
-    private LinearLayout eventsContainer;
+    private FrameLayout eventsContainer;
     private ArrayList<Event> eventList = new ArrayList<>();
     private SharedPreferences prefs;
     private Gson gson = new Gson();
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeViews() {
         addActivityButton = findViewById(R.id.addActivity);
-        timeLabels = findViewById(R.id.timeLabels);
+        timeLabels = findViewById(R.id.timelineContainer);
         eventsContainer = findViewById(R.id.eventsContainer);
         dateTextView = findViewById(R.id.date);
         prefs = getSharedPreferences("TimeCastPrefs", MODE_PRIVATE);
@@ -144,9 +145,6 @@ public class MainActivity extends AppCompatActivity {
         int endTimeMinutes = 20 * 60;
         int totalMinutes = endTimeMinutes - startTimeMinutes;
 
-        ViewGroup.LayoutParams params = eventsContainer.getLayoutParams();
-        params.height = minutesToPixels(totalMinutes);
-        eventsContainer.setLayoutParams(params);
 
         for (int minutes = startTimeMinutes; minutes <= endTimeMinutes; minutes += 30) {
             int hour = minutes / 60;
@@ -236,5 +234,6 @@ public class MainActivity extends AppCompatActivity {
 
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);
+
     }
 }
