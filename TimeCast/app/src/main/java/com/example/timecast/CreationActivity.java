@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
@@ -15,6 +16,9 @@ import java.util.*;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
+import android.provider.Settings;
+
 
 public class CreationActivity extends AppCompatActivity {
     private EditText inputTitle, inputDescription, inputDate, inputStartTime, inputEndTime, inputLocation;
@@ -76,7 +80,11 @@ public class CreationActivity extends AppCompatActivity {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this, R.array.event_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> reminder = ArrayAdapter.createFromResource(
+                this, R.array.reminder_options, android.R.layout.simple_spinner_item);
+        reminder.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         inputType.setAdapter(adapter);
+        inputReminder.setAdapter(reminder);
     }
 
     private void setupDatePicker() {
@@ -176,7 +184,7 @@ public class CreationActivity extends AppCompatActivity {
             }
 
             // Check for event conflict
-            if (isConflicting(date, startTime, endTime)) {
+            if (isConflicting(startCal, endCal)) {
                 Toast.makeText(CreationActivity.this, "Time conflict with another event!", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -208,7 +216,20 @@ public class CreationActivity extends AppCompatActivity {
                 );
 
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminderTime.getTimeInMillis(), pendingIntent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (!alarmManager.canScheduleExactAlarms()) {
+                        Toast.makeText(this, "Cannot schedule exact alarms. Enable permission in settings.", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                        startActivity(intent);
+                        return; // Wait until permission is granted before scheduling
+                    }
+                }
+                try {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminderTime.getTimeInMillis(), pendingIntent);
+                } catch (SecurityException e) {
+                    Toast.makeText(this, "Permission denied for exact alarm: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
             }
 
             // Save all events
@@ -217,6 +238,7 @@ public class CreationActivity extends AppCompatActivity {
             Toast.makeText(this, "Event saved successfully", Toast.LENGTH_SHORT).show();
             finish();
         } catch (Exception e) {
+            Log.e("ReminderDebug", "Exception when saving event", e); // log full stacktrace
             Toast.makeText(this, "Error saving event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
@@ -235,25 +257,17 @@ public class CreationActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isConflicting(Date newDate, Date newStart, Date newEnd) {
+    private boolean isConflicting(Calendar newStart, Calendar newEnd) {
         for (Event event : eventList) {
-            // Only check conflicts on the same date
-            if (isSameDay(event.date, newDate)) {
-                if (newStart.before(event.endTime) && newEnd.after(event.startTime)) {
-                    return true; // Conflict detected
-                }
+            Calendar existingStart = Calendar.getInstance();
+            existingStart.setTime(event.startTime);
+            Calendar existingEnd = Calendar.getInstance();
+            existingEnd.setTime(event.endTime);
+
+            if (newStart.before(existingEnd) && newEnd.after(existingStart)) {
+                return true;
             }
         }
         return false;
     }
-
-    private boolean isSameDay(Date d1, Date d2) {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.setTime(d1);
-        cal2.setTime(d2);
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
-                && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
-    }
-
 }
