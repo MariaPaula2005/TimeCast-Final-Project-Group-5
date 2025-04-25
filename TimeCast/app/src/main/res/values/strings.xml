@@ -27,7 +27,7 @@
         <item>Indoor</item>
         <item>Outdoor</item>
     </string-array>
-    
+
     <!-- Weather descriptions -->
     <string name="weather_clear_sky">Clear sky</string>
     <string name="weather_mainly_clear">Mainly clear</string>
@@ -53,7 +53,7 @@
     <string name="weather_thunderstorm">Thunderstorm</string>
     <string name="weather_thunderstorm_hail">Thunderstorm with hail</string>
     <string name="weather_unknown">Unknown weather</string>
-    
+
     <!-- Weather notifications -->
     <string name="weather_alert_title">Weather Alert for Your Events</string>
     <string name="weather_alert_outdoor_activity">Weather may affect your outdoor activity: %1$s</string>
@@ -67,5 +67,7 @@
         <item>30 minutes before</item>
         <item>1 hour before</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -235,6 +235,7 @@ public class CreationActivity extends AppCompatActivity {
             // Save all events
             prefs.edit().putString(PREF_KEY, gson.toJson(allEvents)).apply();
 
+            setResult(RESULT_OK);
             Toast.makeText(this, "Event saved successfully", Toast.LENGTH_SHORT).show();
             finish();
         } catch (Exception e) {
